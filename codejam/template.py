@@ -1,4 +1,6 @@
-
+"""
+Python template for Google Code Jam (non-interactive)
+"""
 def debug(vals, *pvals, **kwvals):
     print(vals, *pvals, **kwvals) # Comment this out when doing actual run (so this fn results in no-op). For printing of debug statements.
     pass
