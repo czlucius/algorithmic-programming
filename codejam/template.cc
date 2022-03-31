@@ -1,5 +1,5 @@
 /**
-C++ template for Google Code Jam (non-interactive
+C++ template for Google Code Jam (non-interactive)
 */
 #include <iostream>
 // #ifndef GOOGLE_CODE_JAM
