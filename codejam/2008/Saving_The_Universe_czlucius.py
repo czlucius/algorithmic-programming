@@ -1,4 +1,8 @@
-
+"""
+Saving the Universe
+Google Code Jam 2008
+By @czlucius
+"""
 # Use to debug your code. 
 # Use it like print, it will pass all arguments to print (including positional args so you do not have to concatenate and convert values)
 def debug(vals, *pvals, **kwvals):
