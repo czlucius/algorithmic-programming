@@ -1,3 +1,5 @@
+import numpy as np
+import math
 """
 Python template for Google Code Jam (non-interactive)
 """
