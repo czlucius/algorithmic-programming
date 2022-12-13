@@ -36,7 +36,7 @@ class HeightMap(val input: List<String>) {
 
                 val value = input[cpos.y][cpos.x]
                 val diff = value.code - currentValue.code
-                debug("value $value current $currentValue")
+//                debug("value $value current $currentValue")
                 if ((diff <= 1 ) || currentValue == 'S' || value == 'E') {
                     // can reach
                     reachablePositions.add(cpos)
@@ -45,23 +45,23 @@ class HeightMap(val input: List<String>) {
 //                debug("Position x:${position.x}, y:${position.y} is not available")
             }
         }
-        debug("reachable posns $reachablePositions")
+//        debug("reachable posns $reachablePositions")
         return reachablePositions.toList() // render immutable
     }
     val queue = ArrayDeque<Pair<Position, Int>>()
     val visited: MutableList<Position> = mutableListOf()
     val stepMap: MutableMap<Position, Int> =mutableMapOf()
-    fun calculate (start:Position, end:Position ) {
+    fun calculate (start:Position, end:Position ): MutableMap<Position, Int> {
         queue.addLast(Pair(start, 1))
 
         while (!queue.isEmpty()) {
             val item = queue.removeFirst()
-            debug("current cost ${item.second} current posn ${item.first} queue $queue")
+            debug("current cost ${item.second} current posn ${item.first}")
             visited.add(item.first)
             stepMap[item.first] = item.second
             if (item.first ==end) {
                 println("reach end! cost is ${item.second}")
-                return
+                break
             }
             for (neighbour in surroundingReachable(item.first)) {
                 if (neighbour !in visited){
@@ -71,6 +71,7 @@ class HeightMap(val input: List<String>) {
                 }
             }
         }
+        return stepMap
     }
 }
 
@@ -83,7 +84,7 @@ fun main(args: Array<String>) {
     val heightMap = HeightMap(lines)
 
     val steps = (heightMap.calculate(start, Position(68, 21)))
-//    println("Steps: $steps")
+    println("Steps: $steps")
 
 
 
