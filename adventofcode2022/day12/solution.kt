@@ -1,22 +1,41 @@
-/**
-  * WORK IN PROGRESS!
-  */
 import java.io.File
-import java.lang.Exception
-import java.lang.IndexOutOfBoundsException
-const val DEBUG = true
 
+const val DEBUG = false
+
+/**
+ * Use to debug code, a drop-in replacement for [println].
+ *
+ * It will only print if [DEBUG] is true.
+ */
 fun debug(contents: Any) {
     if (DEBUG) {
         println(contents)
     }
 }
 
+// In Kotlin, data classes are compared against one another by their values, and not their memory locations.
+// No custom equals() method is needed.
 data class Position
     (var x: Int, var y: Int)
 
-class HeightMap(val input: List<String>) {
-    private fun surroundingPositions(pos: Position) =
+class HeightMap(private val input: List<String>) {
+
+    private lateinit var _start: Position
+    private lateinit var _end: Position
+
+    init {
+        for ((y, row) in input.withIndex()) {
+            val sx = row.indexOf('S')
+            if (sx != -1) {
+                _start = Position(sx, y)
+            }
+            val ex = row.indexOf('E')
+            if (ex != -1) {
+                _end = Position(ex, y)
+            }
+        }
+    }
+    private fun produceNeighbours(pos: Position) =
         listOf<Position>(
             Position(pos.x, pos.y - 1),
             Position(pos.x - 1, pos.y),
@@ -24,41 +43,43 @@ class HeightMap(val input: List<String>) {
             Position(pos.x, pos.y + 1)
         )
 
-    fun surroundingReachable(pos: Position): List<Position> {
-        val surroundings = surroundingPositions(pos)
+    private fun neighboursReachable(pos: Position): List<Position> {
+        val neighbours = produceNeighbours(pos)
         val currentValue: Char = input[pos.y][pos.x]
 
         val reachablePositions = mutableListOf<Position>()
 
 
-        for (cpos in surroundings) {
-            print("cpos is $cpos")
-            try {
-
-                val value = input[cpos.y][cpos.x]
-                val diff = value.code - currentValue.code
-//                debug("value $value current $currentValue")
-                debug("value is $value")
-                if ((diff <= 1 ) || currentValue == 'S' || value == 'E') {
-                    // can reach
-                    reachablePositions.add(cpos)
+        for (neighbour in neighbours) {
+            val yExist = !(neighbour.y >= input.size || neighbour.y < 0)
+            // There should be at least one row and all rows are uniform in length. Hence, we take input[0]
+            val xExist = !(neighbour.x >= input[0].length || neighbour.x < 0)
+            if (yExist && xExist) {
+                var value = input[neighbour.y][neighbour.x]
+                if (value == 'E') {
+                    value = 'z'
                 }
-            } catch (_: IndexOutOfBoundsException) {
-//                debug("Position x:${position.x}, y:${position.y} is not available")
+                val diff = value.code - currentValue.code
+                if ((diff <= 1) || currentValue == 'S') {
+                    // can reach
+                    reachablePositions.add(neighbour)
+                }
             }
+
         }
-//        debug("reachable posns $reachablePositions")
         return reachablePositions.toList() // render immutable
     }
-    val queue = ArrayDeque<Pair<Position, Int>>()
-    val visited: MutableList<Position> = mutableListOf()
-    val stepMap: MutableMap<Position, Int> =mutableMapOf()
-    fun calculate (start:Position, end:Position ): MutableMap<Position, Int> {
-        queue.addLast(Pair(start, 1))
+
+    private val queue = ArrayDeque<Pair<Position, Int>>()
+    private val visited: MutableList<Position> = mutableListOf()
+    private val stepMap: MutableMap<Position, Int> = mutableMapOf()
+
+    fun calculate(start: Position = _start, end: Position = _end): Int? {
+        queue.addLast(Pair(start, 0))
 
         while (!queue.isEmpty()) {
             val item = queue.removeFirst()
-            debug("current cost ${item.second} current posn ${item.first}")
+            debug("current cost ${item.second} current posn ${item.first} value is ${input[item.first.y][item.first.x]}")
 
             if (item.first in visited) {
                 debug("skipped")
@@ -67,32 +88,30 @@ class HeightMap(val input: List<String>) {
             visited.add(item.first)
             stepMap[item.first] = item.second
             if (item.first == end) {
-                println("reach end! cost is ${item.second}")
-                break
+                return item.second
             }
-            for (neighbour in surroundingReachable(item.first)) {
-                if (neighbour !in visited){
-                    val stepsN = item.second + 1
-                    queue.addLast(Pair(neighbour, stepsN))
+            for (neighbour in neighboursReachable(item.first)) {
+                if (neighbour !in visited) {
+                    val neighbourSteps = item.second + 1
+                    queue.addLast(Pair(neighbour, neighbourSteps))
                 }
             }
         }
-        return stepMap
+        return null
     }
 }
 
 
-
-fun main(args: Array<String>) {
+fun main() {
     val lines = File("input").readLines()
-    println(lines[20][68])
-    val start = Position(0,20)
-
     val heightMap = HeightMap(lines)
 
-    val steps = (heightMap.calculate(start, Position(68, 20)))
-    // println("Steps: $steps")
+//    val start = Position(0, 20)
+//    val end = Position(68, 20)
 
+
+    val steps = heightMap.calculate()
+    println("Steps: $steps")
 
 
 }
