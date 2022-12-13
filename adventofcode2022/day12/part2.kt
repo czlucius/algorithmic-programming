@@ -57,7 +57,7 @@ class HeightMap(private val input: List<String>) {
             }
 
         }
-        println(reachablePositions)
+        debug(reachablePositions)
         return reachablePositions.toList() // render immutable
     }
 
