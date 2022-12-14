@@ -72,8 +72,7 @@ class HeightMap(private val input: List<String>) {
 
     private val queue = ArrayDeque<Pair<Position, Int>>()
     private val visited: MutableList<Position> = mutableListOf()
-    private val stepMap: MutableMap<Position, Int> = mutableMapOf()
-
+    
     fun calculate(start: Position = _start, end: Position = _end): Int? {
         queue.addLast(Pair(start, 0))
 
@@ -86,7 +85,6 @@ class HeightMap(private val input: List<String>) {
                 continue
             }
             visited.add(item.first)
-            stepMap[item.first] = item.second
             if (item.first == end) {
                 return item.second
             }
