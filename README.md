@@ -1,6 +1,5 @@
 # algorithmic-programming
-A repo to store solutions and templates for code challenges like Google Code Jam.
-I will be using this repo to store solutions for AoC 2022, which I am participating with NUS Hackers.
+A repo to store solutions and templates for competitive programming challenges.
 
 ## Contributing
 Anyone is welcome to contribute to the following:
