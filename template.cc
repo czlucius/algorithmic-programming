@@ -18,7 +18,7 @@
 #endif
 
 using namespace std;
-#define ll long long
+typedef long long ll;
 
 
 
